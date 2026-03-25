@@ -1,0 +1,31 @@
+@model Entities.Product
+
+<div class="row mt-4">
+    <div class="col-md-5">
+        @if(string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img class="img-fluid border rounded" src="https://via.placeholder.com/400x400?text=No+Image" alt="@Model.ProductName" />
+        }
+        else
+        {
+            <img class="img-fluid border rounded shadow-sm" src="@Model.ImageUrl" alt="@Model.ProductName" />
+        }
+    </div>
+    <div class="col-md-7">
+        <h3 class="display-5">@Model.ProductName</h3>
+        <h4 class="text-success border-bottom pb-2">@Model.Price.ToString("C")</h4>
+        
+        <p class="mt-3">
+            Detaylı ürün açıklaması, stok bilgisi veya ek meta veriler burada yer alabilir.
+        </p>
+
+        <div class="mt-4 btn-group">
+            <a class="btn btn-primary" asp-controller="Home" asp-action="Index">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+            <a class="btn btn-outline-primary" asp-controller="Product" asp-action="Index">
+                <i class="fa-solid fa-list"></i> Products
+            </a>
+        </div>
+    </div>
+</div>
