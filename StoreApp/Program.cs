@@ -9,8 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddRazorPages();
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
+    options.Cookie.HttpOnly = false;
+    options.Cookie.IsEssential = true;
+});
+
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddDbContext<RepositoryContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("sqlConnection"),
@@ -38,6 +47,7 @@ app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseSession();
 app.MapAreaControllerRoute(
     name: "AdminArea",
     areaName: "Admin",
@@ -46,6 +56,7 @@ app.MapControllerRoute(
   name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapRazorPages();
 
 
 

@@ -19,13 +19,20 @@
             Detaylı ürün açıklaması, stok bilgisi veya ek meta veriler burada yer alabilir.
         </p>
 
-        <div class="mt-4 btn-group">
+        <div class="mt-4 d-flex gap-2">
             <a class="btn btn-primary" asp-controller="Home" asp-action="Index">
                 <i class="fa-solid fa-house"></i> Home
             </a>
             <a class="btn btn-outline-primary" asp-controller="Product" asp-action="Index">
                 <i class="fa-solid fa-list"></i> Products
             </a>
+            <form asp-page="/Cart" method="post">
+                <input type="hidden" name="productId" value="@Model.ProductId" />
+                <input type="hidden" name="returnUrl" value="/Product/Get/@Model.ProductId" />
+                <button type="submit" class="btn btn-success shadow-sm">
+                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                </button>
+            </form>
         </div>
     </div>
 </div>
