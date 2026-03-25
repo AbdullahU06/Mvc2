@@ -1,0 +1,17 @@
+@model IEnumerable<Store.Entities.Models.Category>
+<div class="text-center md-3">
+    <h2 class="display-6">
+        Categories
+
+    </h2>
+
+
+</div>
+<ul class="list-group">
+    @foreach (var category in Model)
+    {
+        <li class="list-group-item">
+            <h5>@category.CategoryName</h5>
+        </li>
+    }
+</ul>
