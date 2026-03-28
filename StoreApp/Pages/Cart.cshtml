@@ -59,7 +59,7 @@
             <a class="btn btn-primary" href="@Model.ReturnUrl"><i class="fa-solid fa-arrow-left"></i> Continue Shopping</a>
             @if(Model.Cart?.Lines.Count > 0)
             {
-                <a class="btn btn-success" href="#"><i class="fa-solid fa-credit-card"></i> Checkout</a>
+                <a class="btn btn-success" href="/Order/Checkout"><i class="fa-solid fa-credit-card"></i> Checkout</a>
             }
         </div>
     </div>

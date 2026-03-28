@@ -1,0 +1,16 @@
+@model Entities.Models.Cart
+
+<div class="d-flex align-items-center">
+    @if (Model.Lines.Count > 0)
+    {
+        <a asp-page="/Cart" class="btn btn-sm btn-outline-secondary">
+            <i class="fa-solid fa-cart-shopping"></i> 
+            <span class="fw-bold">@Model.Lines.Count</span> item(s)
+            <span class="badge bg-success ms-1">@Model.ComputeTotalValue().ToString("C")</span>
+        </a>
+    }
+    else
+    {
+        <span class="text-muted small"><i class="fa-solid fa-cart-shopping"></i> Empty Cart</span>
+    }
+</div>

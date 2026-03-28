@@ -1,6 +1,7 @@
 
 //burda  bir makaralar oldu yanlış ama hayılısı 
 using Repositories.Contracts;
+using Entities.Models;
 using Store.Entities.Models;
 
 namespace Repositories

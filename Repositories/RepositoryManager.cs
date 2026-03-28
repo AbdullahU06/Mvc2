@@ -8,20 +8,23 @@ namespace Repositories
 
         private readonly IProductRepository _productRepository;
 
-        private ICategoryRepository _categoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IOrderRepository _orderRepository;
 
 
 
-        public RepositoryManager(IProductRepository productRepository, RepositoryContext repositoryContext, ICategoryRepository categoryRepository)
+        public RepositoryManager(IProductRepository productRepository, RepositoryContext repositoryContext, ICategoryRepository categoryRepository, IOrderRepository orderRepository)
         {
             _productRepository = productRepository;
             _context = repositoryContext;
             _categoryRepository = categoryRepository;
+            _orderRepository = orderRepository;
         }
 
         public IProductRepository Product => _productRepository;
 
         public ICategoryRepository Category => _categoryRepository;
+        public IOrderRepository Order => _orderRepository;
 
         public void Save()
         {

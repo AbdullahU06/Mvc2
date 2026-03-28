@@ -1,0 +1,78 @@
+@model Order
+
+<div class="container my-5">
+    <div class="row g-5">
+        <div class="col-md-5 col-lg-4 order-md-last">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-primary">Your cart</span>
+                <span class="badge bg-primary rounded-pill"><i class="fa fa-shopping-cart"></i></span>
+            </h4>
+            <div class="alert alert-info shadow-sm border-0">
+                <i class="fa-solid fa-circle-info me-2"></i>Please fill in your details to complete your order.
+            </div>
+            <!-- Sepet Özeti de eklenebilir. -->
+        </div>
+
+        <div class="col-md-7 col-lg-8">
+            <div class="bg-white p-4 p-md-5 rounded border shadow-sm">
+                <h4 class="mb-4 text-dark border-bottom pb-3"><i class="fa-solid fa-truck-fast text-primary me-2"></i>Shipping Details</h4>
+                
+                <div asp-validation-summary="All" class="text-danger mb-3 fw-bold"></div>
+
+                <form asp-action="Checkout" method="post" class="needs-validation">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label asp-for="Name" class="form-label fw-bold">Full Name</label>
+                            <input asp-for="Name" class="form-control bg-light" placeholder="John Doe" />
+                            <span asp-validation-for="Name" class="text-danger small fw-bold"></span>
+                        </div>
+
+                        <div class="col-12 mt-5">
+                            <h5 class="mb-3 text-secondary">Address Information</h5>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Line1" class="form-label fw-bold">Address Line 1</label>
+                            <input asp-for="Line1" class="form-control bg-light" placeholder="1234 Main St" />
+                            <span asp-validation-for="Line1" class="text-danger small fw-bold"></span>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label asp-for="Line2" class="form-label fw-bold">Address Line 2 <span class="text-muted fw-normal">(Optional)</span></label>
+                            <input asp-for="Line2" class="form-control bg-light" placeholder="Apartment or suite" />
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label asp-for="Line3" class="form-label fw-bold">Address Line 3 <span class="text-muted fw-normal">(Optional)</span></label>
+                            <input asp-for="Line3" class="form-control bg-light" placeholder="Additional info" />
+                        </div>
+
+                        <div class="col-md-6 mt-4">
+                            <label asp-for="City" class="form-label fw-bold">City</label>
+                            <input asp-for="City" class="form-control bg-light" placeholder="Istanbul" />
+                            <span asp-validation-for="City" class="text-danger small fw-bold"></span>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <div class="form-check p-3 bg-light rounded border border-primary border-opacity-25 d-flex align-items-center">
+                                <input asp-for="GiftWrap" type="checkbox" class="form-check-input ms-1 me-3 fs-5" id="giftWrapCheck">
+                                <label asp-for="GiftWrap" class="form-check-label mb-0 fs-6 text-dark" for="giftWrapCheck">
+                                    <i class="fa-solid fa-gift text-danger me-2"></i><strong>Pack as a gift</strong> (Include a special wrap)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-5 opacity-25">
+
+                    <div class="d-flex flex-column flex-md-row justify-content-end gap-3">
+                        <a class="btn btn-outline-secondary btn-lg px-4" asp-controller="Home" asp-action="Index">Continue Shopping</a>
+                        <button class="btn btn-primary btn-lg px-5 shadow" type="submit">
+                            <i class="fa-solid fa-credit-card me-2"></i>Complete Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
