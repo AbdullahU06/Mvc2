@@ -16,6 +16,7 @@ namespace StoreApp.Components
 
         public IViewComponentResult Invoke()
         {
+            ViewBag.SelectedCategory = RouteData?.Values["categoryId"] ?? HttpContext.Request.Query["categoryId"];
             var categories = _manager.CategoryService.GetAllCategories(false);
             return View(categories);
         }

@@ -1,3 +1,5 @@
+using Entities.RequestParameters;
+
 namespace Repositories
 {
     public class ProductRepository : RepositoryBase<Entities.Product>, Contracts.IProductRepository
@@ -8,6 +10,14 @@ namespace Repositories
 
         public IQueryable<Entities.Product> GetAllProducts(bool trackChanges) =>
             FindAll(trackChanges);
+
+        public IQueryable<Entities.Product> GetAllProductsWithDetails(ProductRequestParameters p)
+        {
+            return FindAll(false)
+                .Where(x => !p.CategoryId.HasValue || x.CategoryId.Equals(p.CategoryId))
+                .Where(x => x.Price >= p.MinPrice && x.Price <= p.MaxPrice)
+                .Where(x => string.IsNullOrWhiteSpace(p.SearchTerm) || x.ProductName.ToLower().Contains(p.SearchTerm.ToLower()));
+        }
 
         public Entities.Product? GetOneProduct(int id, bool trackChanges) =>
             FindAll(trackChanges).SingleOrDefault(p => p.ProductId == id);

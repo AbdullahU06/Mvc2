@@ -1,12 +1,61 @@
-@model IQueryable<Product>
-
+@model IEnumerable<Product>
 
 <div class="row">
     <div class="col-12 col-md-3 mb-4">
+        
+        <!-- Search Form -->
+        <div class="card mb-4 mt-3 border-0 shadow-sm">
+            <div class="card-header bg-primary text-white rounded-top">
+                <h6 class="card-title my-1 mb-0 fw-bold"><i class="fa-solid fa-magnifying-glass me-2"></i>Ara / Search</h6>
+            </div>
+            <div class="card-body border border-top-0 rounded-bottom">
+                <form asp-controller="Product" asp-action="Index" method="get">
+                    <!-- Preserve category selected state -->
+                    <input type="hidden" name="CategoryId" value="@Context.Request.Query["CategoryId"]" />
+                    <div class="input-group">
+                        <input type="text" name="SearchTerm" class="form-control" placeholder="Laptop..." value="@Context.Request.Query["SearchTerm"]" />
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         @await Component.InvokeAsync("CategoriesMenu")
+
+        <!-- Price Range Form -->
+        <div class="card mt-4 border-0 shadow-sm">
+            <div class="card-header bg-success text-white rounded-top">
+                <h6 class="card-title my-1 mb-0 fw-bold"><i class="fa-solid fa-filter me-2"></i>Fiyat / Price</h6>
+            </div>
+            <div class="card-body border border-top-0 rounded-bottom">
+                <form asp-controller="Product" asp-action="Index" method="get">
+                    <!-- Preserve state -->
+                    <input type="hidden" name="CategoryId" value="@Context.Request.Query["CategoryId"]" />
+                    <input type="hidden" name="SearchTerm" value="@Context.Request.Query["SearchTerm"]" />
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Min Price (₺)</label>
+                        <input type="number" name="MinPrice" class="form-control form-control-sm" value="@(Context.Request.Query["MinPrice"].FirstOrDefault() ?? "0")" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Max Price (₺)</label>
+                        <input type="number" name="MaxPrice" class="form-control form-control-sm" value="@(Context.Request.Query["MaxPrice"].FirstOrDefault() ?? "1000000")" />
+                    </div>
+                    <button type="submit" class="btn btn-outline-success btn-sm w-100"><i class="fa-solid fa-arrow-down-short-wide me-1"></i> Filtrele</button>
+                </form>
+            </div>
+        </div>
+
     </div>
     <div class="col-12 col-md-9">
         <div class="row g-4 my-3">
+            @if(!Model.Any()) 
+            {
+                <div class="col-12 text-center py-5">
+                    <h4 class="text-muted"><i class="fa-solid fa-box-open mb-3 fs-1 text-danger"></i><br>Ürün bulunamadı. / No products found.</h4>
+                    <a asp-action="Index" class="btn btn-primary mt-3">Tüm Ürünlere Dön (Clear Filters)</a>
+                </div>
+            }
             @foreach (var prd in Model)
             {
                 <partial name="_ProductCard" model="@prd" />

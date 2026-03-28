@@ -4,6 +4,7 @@ using System.Linq;
 using Repositories;
 using Repositories.Contracts;
 using Entities;
+using Entities.RequestParameters;
 using Services.Contracts;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 
@@ -20,9 +21,9 @@ namespace StoreApp.Controllers
             _manager = manager;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(ProductRequestParameters p)
         {
-            var model = _manager.ProductService.GetAllProducts(false);
+            var model = _manager.ProductService.GetAllProductsWithDetails(p);
             return View(model);
 
         }

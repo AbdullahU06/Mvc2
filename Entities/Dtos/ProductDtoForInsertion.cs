@@ -13,4 +13,7 @@ public record ProductDtoForInsertion
 
     public string? ImageUrl { get; set; }
     public IFormFile? File { get; set; }
+
+    [Required(ErrorMessage = "Category is required! / Kategori seçimi zorunludur!")]
+    public int? CategoryId { get; init; }
 }
