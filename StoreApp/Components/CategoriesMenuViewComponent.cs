@@ -1,0 +1,29 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Services.Contracts;
+
+namespace StoreApp.Components
+{
+    public class CategoriesMenuViewComponent : ViewComponent
+    {
+        private readonly IServiceManager _manager;
+
+        public CategoriesMenuViewComponent(IServiceManager manager)
+        {
+            _manager = manager;
+        }
+
+        public IViewComponentResult Invoke()
+        {
+            ViewBag.SelectedCategory = RouteData?.Values["categoryId"] ?? HttpContext.Request.Query["categoryId"];
+            var categories = _manager.CategoryService.GetAllCategories(false);
+            return View(categories);
+        }
+
+
+
+
+
+    }
+}
