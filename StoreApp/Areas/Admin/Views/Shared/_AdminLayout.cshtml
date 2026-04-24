@@ -1,23 +1,239 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] - Admin Panel</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] – StoreApp Admin</title>
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.css" />
+    <style>
+        :root {
+            --sidebar-width: 240px;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --sidebar-active: #3b82f6;
+            --topbar-height: 60px;
+        }
+
+        body { background: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
+
+        /* ── Sidebar ── */
+        .admin-sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            display: flex; flex-direction: column;
+            z-index: 1000; overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            padding: 20px 24px;
+            border-bottom: 1px solid #1e293b;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .sidebar-brand .brand-icon {
+            width: 36px; height: 36px; background: var(--sidebar-active);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: white;
+        }
+        .sidebar-brand .brand-name {
+            color: white; font-weight: 700; font-size: 16px; line-height: 1.2;
+        }
+        .sidebar-brand .brand-sub { color: #94a3b8; font-size: 11px; }
+
+        .sidebar-nav { padding: 16px 12px; flex: 1; }
+        .nav-label {
+            color: #475569; font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: .8px;
+            padding: 8px 12px 4px;
+        }
+
+        .sidebar-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 12px; border-radius: 8px; margin-bottom: 2px;
+            color: #94a3b8; text-decoration: none;
+            font-size: 14px; font-weight: 500;
+            transition: all .15s;
+        }
+        .sidebar-link:hover { background: var(--sidebar-hover); color: white; }
+        .sidebar-link.active { background: var(--sidebar-active); color: white; }
+        .sidebar-link .nav-icon { width: 20px; text-align: center; font-size: 15px; }
+
+        .sidebar-footer {
+            padding: 16px; border-top: 1px solid #1e293b;
+        }
+        .sidebar-footer .user-info {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+        }
+        .sidebar-footer .avatar {
+            width: 36px; height: 36px; background: var(--sidebar-active);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; font-size: 14px; flex-shrink: 0;
+        }
+        .sidebar-footer .user-name { color: white; font-size: 13px; font-weight: 600; }
+        .sidebar-footer .user-role { color: #64748b; font-size: 11px; }
+
+        /* ── Main ── */
+        .admin-main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+        }
+
+        .admin-topbar {
+            height: var(--topbar-height);
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex; align-items: center;
+            padding: 0 24px;
+            position: sticky; top: 0; z-index: 100;
+            gap: 12px;
+        }
+        .topbar-title { font-size: 18px; font-weight: 700; color: #0f172a; flex: 1; }
+        .topbar-badge {
+            background: #f1f5f9; border-radius: 20px; padding: 4px 12px;
+            font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 6px;
+        }
+
+        .admin-content { padding: 28px 32px; flex: 1; }
+
+        /* ── Cards ── */
+        .stat-card {
+            background: white; border-radius: 12px;
+            padding: 20px 24px; border: 1px solid #e2e8f0;
+            display: flex; align-items: center; gap: 16px;
+        }
+        .stat-icon {
+            width: 52px; height: 52px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+        .stat-value { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1; }
+        .stat-label { font-size: 13px; color: #64748b; margin-top: 2px; }
+
+        /* ── Tables ── */
+        .admin-card {
+            background: white; border-radius: 12px;
+            border: 1px solid #e2e8f0; overflow: hidden;
+        }
+        .admin-card-header {
+            padding: 16px 20px; border-bottom: 1px solid #f1f5f9;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .admin-card-header h5 { margin: 0; font-weight: 700; font-size: 15px; color: #0f172a; }
+
+        .table { margin-bottom: 0; }
+        .table thead th {
+            background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+            font-size: 12px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: .5px; color: #64748b; padding: 12px 16px;
+        }
+        .table tbody td { padding: 14px 16px; vertical-align: middle; font-size: 14px; border-color: #f1f5f9; }
+        .table tbody tr:hover { background: #fafafa; }
+
+        /* ── Forms ── */
+        .form-card {
+            background: white; border-radius: 12px;
+            border: 1px solid #e2e8f0; padding: 28px;
+            max-width: 560px;
+        }
+        .form-label { font-size: 13px; font-weight: 600; color: #374151; }
+        .form-control, .form-select {
+            border-radius: 8px; border: 1px solid #d1d5db;
+            font-size: 14px; padding: 10px 14px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--sidebar-active); box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+        }
+
+        /* ── Buttons ── */
+        .btn { border-radius: 8px; font-size: 13px; font-weight: 600; }
+        .btn-primary { background: var(--sidebar-active); border-color: var(--sidebar-active); }
+
+        /* ── Badges ── */
+        .badge { font-size: 11px; font-weight: 600; border-radius: 6px; padding: 4px 8px; }
+
+        /* ── Page header ── */
+        .page-header { margin-bottom: 24px; }
+        .page-header h2 { font-size: 22px; font-weight: 800; color: #0f172a; margin: 0; }
+        .page-header p { color: #64748b; font-size: 14px; margin: 4px 0 0; }
+    </style>
 </head>
 <body>
-    <partial name="_Navbar" />
-    <div class="container mt-4">
-        <main role="main" class="pb-3">
+<div class="d-flex">
+
+    <!-- ── Sidebar ── -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="fa-solid fa-store"></i></div>
+            <div>
+                <div class="brand-name">StoreApp</div>
+                <div class="brand-sub">Admin Panel</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label">Ana Menü</div>
+            <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+               asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                <span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span> Dashboard
+            </a>
+            <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" ? "active" : "")"
+               asp-area="Admin" asp-controller="Product" asp-action="Index">
+                <span class="nav-icon"><i class="fa-solid fa-box"></i></span> Ürünler
+            </a>
+            <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Category" ? "active" : "")"
+               asp-area="Admin" asp-controller="Category" asp-action="Index">
+                <span class="nav-icon"><i class="fa-solid fa-tags"></i></span> Kategoriler
+            </a>
+            <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Order" ? "active" : "")"
+               asp-area="Admin" asp-controller="Order" asp-action="Index">
+                <span class="nav-icon"><i class="fa-solid fa-cart-shopping"></i></span> Siparişler
+            </a>
+
+            <div class="nav-label mt-3">Site</div>
+            <a class="sidebar-link" asp-area="" asp-controller="Product" asp-action="Index">
+                <span class="nav-icon"><i class="fa-solid fa-globe"></i></span> Siteye Dön
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="avatar">@(User.Identity!.Name?.Substring(0,1).ToUpper() ?? "A")</div>
+                <div>
+                    <div class="user-name">@User.Identity!.Name</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+            <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="btn btn-sm w-100"
+                        style="background:#1e293b; color:#94a3b8; border:none;">
+                    <i class="fa-solid fa-right-from-bracket me-1"></i> Çıkış Yap
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <div class="admin-main">
+        <header class="admin-topbar">
+            <span class="topbar-title">@(ViewData["Title"] ?? "Admin")</span>
+            <div class="topbar-badge">
+                <i class="fa-solid fa-circle" style="color:#22c55e; font-size:8px;"></i>
+                Çevrimiçi
+            </div>
+        </header>
+
+        <main class="admin-content">
             @RenderBody()
         </main>
     </div>
+</div>
 
-    <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/font-awesome/js/all.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+<script src="~/lib/jquery/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/font-awesome/js/all.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

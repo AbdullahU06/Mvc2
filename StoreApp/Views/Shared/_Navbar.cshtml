@@ -14,15 +14,43 @@
                     <a class="nav-link active" aria-current="page" asp-controller="Product"
                        asp-action="Index">Products(@await Component.InvokeAsync("ProductSummary"))</a>
                 </li>
-
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" asp-controller="Category"
                        asp-action="Index">Categories</a>
                 </li>
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                            <i class="fa-solid fa-shield-halved"></i> Admin
+                        </a>
+                    </li>
+                }
             </ul>
-            
-            <div class="d-flex">
+
+            <div class="d-flex align-items-center gap-2">
                 @await Component.InvokeAsync("CartSummary")
+
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    <span class="navbar-text me-2">
+                        <i class="fa-solid fa-user"></i> @User.Identity.Name
+                    </span>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="fa-solid fa-right-from-bracket"></i> Çıkış
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn btn-outline-primary btn-sm" asp-controller="Account" asp-action="Login">
+                        <i class="fa-solid fa-right-to-bracket"></i> Giriş
+                    </a>
+                    <a class="btn btn-outline-success btn-sm" asp-controller="Account" asp-action="Register">
+                        <i class="fa-solid fa-user-plus"></i> Kayıt
+                    </a>
+                }
             </div>
         </div>
     </div>

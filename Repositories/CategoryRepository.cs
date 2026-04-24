@@ -18,6 +18,10 @@ namespace Repositories
             return FindAll(trackChanges)
                 .SingleOrDefault(c => c.CategoryId == id);
         }
+
+        public void CreateOneCategory(Category category) => Create(category);
+        public void UpdateOneCategory(Category category) => Update(category);
+        public void DeleteOneCategory(Category category) => Remove(category);
     }
 
 

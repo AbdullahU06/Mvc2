@@ -1,11 +1,12 @@
 using Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Entities.Models;
 using Store.Entities.Models;
 
 namespace Repositories;
 
-public class RepositoryContext : DbContext
+public class RepositoryContext : IdentityDbContext<ApplicationUser>
 {
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -13,7 +14,6 @@ public class RepositoryContext : DbContext
 
     public RepositoryContext(DbContextOptions<RepositoryContext> options) : base(options)
     {
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,4 +31,3 @@ public class RepositoryContext : DbContext
         );
     }
 }
-

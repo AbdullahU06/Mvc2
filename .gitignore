@@ -3,6 +3,20 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# Claude Code
+.claude/settings.local.json
+
+# IDE caches
+*.lscache
+
+# SQLite DB files (runtime)
+*.db
+*.db-shm
+*.db-wal
+
+# Uploaded user images
+StoreApp/wwwroot/images/
+
 # dotenv files
 .env
 

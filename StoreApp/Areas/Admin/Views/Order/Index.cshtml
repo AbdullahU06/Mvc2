@@ -1,34 +1,46 @@
 @model IQueryable<Order>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Siparişler";
+}
 
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark">
-            <i class="fa-solid fa-box-open text-primary me-2"></i>Order Management
-        </h2>
-        <span class="badge bg-warning text-dark fs-6 px-3 py-2 shadow-sm">
-            <i class="fa-solid fa-clock me-1"></i>In Process: @ViewBag.NumberOfInProcess
-        </span>
+<div class="page-header d-flex align-items-center justify-content-between">
+    <div>
+        <h2>Siparişler</h2>
+        <p>Tüm siparişleri buradan yönetebilirsin</p>
     </div>
-
-    @if (!Model.Any())
+    @if (ViewBag.NumberOfInProcess > 0)
     {
-        <div class="alert alert-info shadow-sm border-0 text-center py-4">
-            <i class="fa-solid fa-inbox fa-2x mb-2 d-block"></i>
-            <span class="fs-5">No orders yet.</span>
-        </div>
+        <span class="badge fs-6 px-3 py-2" style="background:#fff7ed; color:#f97316; border:1px solid #fed7aa;">
+            <i class="fa-solid fa-hourglass-half me-1"></i> @ViewBag.NumberOfInProcess Bekleyen
+        </span>
     }
-    else
-    {
+</div>
+
+@if (!Model.Any())
+{
+    <div class="admin-card p-5 text-center">
+        <i class="fa-solid fa-inbox fa-3x mb-3 text-muted"></i>
+        <p class="text-muted mb-0">Henüz hiç sipariş yok.</p>
+    </div>
+}
+else
+{
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h5><i class="fa-solid fa-cart-shopping me-2 text-warning"></i>Sipariş Listesi</h5>
+            <span class="badge bg-warning text-dark">@Model.Count() sipariş</span>
+        </div>
         <div class="table-responsive">
-            <table class="table table-hover align-middle shadow-sm rounded overflow-hidden">
-                <thead class="table-dark">
+            <table class="table">
+                <thead>
                     <tr>
-                        <th>Order ID</th>
-                        <th>Customer</th>
-                        <th>City</th>
-                        <th>Gift Wrap</th>
-                        <th>Status</th>
-                        <th class="text-end">Actions</th>
+                        <th>Sipariş #</th>
+                        <th>Müşteri</th>
+                        <th>Şehir</th>
+                        <th>Hediye Paketi</th>
+                        <th>Durum</th>
+                        <th class="text-end">İşlem</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,29 +48,31 @@
                     {
                         <tr>
                             <td><span class="badge bg-primary rounded-pill">#@order.OrderId</span></td>
-                            <td class="fw-bold">@order.Name</td>
+                            <td class="fw-semibold">@order.Name</td>
                             <td>@order.City</td>
                             <td>
                                 @if (order.GiftWrap)
                                 {
-                                    <span class="badge bg-danger"><i class="fa-solid fa-gift me-1"></i>Yes</span>
+                                    <span class="badge" style="background:#fdf4ff; color:#a855f7;">
+                                        <i class="fa-solid fa-gift me-1"></i>Evet
+                                    </span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-secondary">No</span>
+                                    <span class="badge bg-light text-muted">Hayır</span>
                                 }
                             </td>
                             <td>
                                 @if (order.Shipped)
                                 {
-                                    <span class="badge bg-success px-3 py-2">
-                                        <i class="fa-solid fa-circle-check me-1"></i>Shipped
+                                    <span class="badge" style="background:#f0fdf4; color:#16a34a;">
+                                        <i class="fa-solid fa-circle-check me-1"></i>Teslim Edildi
                                     </span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-warning text-dark px-3 py-2">
-                                        <i class="fa-solid fa-hourglass-half me-1"></i>In Process
+                                    <span class="badge" style="background:#fff7ed; color:#ea580c;">
+                                        <i class="fa-solid fa-hourglass-half me-1"></i>Bekliyor
                                     </span>
                                 }
                             </td>
@@ -67,8 +81,8 @@
                                 {
                                     <form asp-area="Admin" asp-controller="Order" asp-action="Complete" method="post" class="d-inline">
                                         <input type="hidden" name="id" value="@order.OrderId" />
-                                        <button type="submit" class="btn btn-sm btn-success shadow-sm">
-                                            <i class="fa-solid fa-truck-fast me-1"></i>Mark Shipped
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fa-solid fa-truck-fast me-1"></i>Teslim Edildi İşaretle
                                         </button>
                                     </form>
                                 }
@@ -78,5 +92,5 @@
                 </tbody>
             </table>
         </div>
-    }
-</div>
+    </div>
+}

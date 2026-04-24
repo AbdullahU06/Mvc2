@@ -27,6 +27,26 @@ namespace Services
             return category;
         }
 
+        public void CreateOneCategory(Category category)
+        {
+            _manager.Category.CreateOneCategory(category);
+            _manager.Save();
+        }
+
+        public void UpdateOneCategory(int id, Category category)
+        {
+            var entity = GetOneCategory(id, trackChanges: true);
+            entity.CategoryName = category.CategoryName;
+            _manager.Save();
+        }
+
+        public void DeleteOneCategory(int id)
+        {
+            var entity = GetOneCategory(id, trackChanges: true);
+            _manager.Category.DeleteOneCategory(entity);
+            _manager.Save();
+        }
+
     }
 
 

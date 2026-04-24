@@ -1,9 +1,11 @@
 using Entities.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Repositories.Contracts;
 using Services;
 using Services.Contracts;
+using Store.Entities.Models;
 using StoreApp.Models;
 
 namespace StoreApp.Infrastructure.Extensions
@@ -16,6 +18,29 @@ namespace StoreApp.Infrastructure.Extensions
             {
                 options.UseSqlite(configuration.GetConnectionString("sqlConnection"),
                     b => b.MigrationsAssembly("StoreApp"));
+            });
+        }
+
+        public static void ConfigureIdentity(this IServiceCollection services)
+        {
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = false;
+            })
+            .AddEntityFrameworkStores<RepositoryContext>()
+            .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
             });
         }
 
@@ -59,6 +84,34 @@ namespace StoreApp.Infrastructure.Extensions
             if (context.Database.GetPendingMigrations().Any())
             {
                 context.Database.Migrate();
+            }
+        }
+
+        public static async Task SeedIdentityDataAsync(this IApplicationBuilder app)
+        {
+            using var scope = app.ApplicationServices.CreateScope();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            if (!await roleManager.RoleExistsAsync("Admin"))
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+
+            if (!await roleManager.RoleExistsAsync("User"))
+                await roleManager.CreateAsync(new IdentityRole("User"));
+
+            var adminEmail = "admin@store.com";
+            if (await userManager.FindByEmailAsync(adminEmail) == null)
+            {
+                var admin = new ApplicationUser
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    FirstName = "Admin",
+                    LastName = "User"
+                };
+                var result = await userManager.CreateAsync(admin, "Admin123*");
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(admin, "Admin");
             }
         }
 

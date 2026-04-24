@@ -1,11 +1,106 @@
 @{
-    Layout = "_Layout";
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard";
 }
 
+<div class="page-header">
+    <h2>Dashboard</h2>
+    <p>Mağazanın genel durumuna hızlı bakış</p>
+</div>
 
-@{
-    ViewData["Title"] = "Admin Dashboard";
-}
+<!-- İstatistik Kartları -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#eff6ff;">
+                <i class="fa-solid fa-box" style="color:#3b82f6;"></i>
+            </div>
+            <div>
+                <div class="stat-value">@ViewBag.TotalProducts</div>
+                <div class="stat-label">Toplam Ürün</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#f0fdf4;">
+                <i class="fa-solid fa-tags" style="color:#22c55e;"></i>
+            </div>
+            <div>
+                <div class="stat-value">@ViewBag.TotalCategories</div>
+                <div class="stat-label">Toplam Kategori</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#fefce8;">
+                <i class="fa-solid fa-cart-shopping" style="color:#eab308;"></i>
+            </div>
+            <div>
+                <div class="stat-value">@ViewBag.TotalOrders</div>
+                <div class="stat-label">Toplam Sipariş</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#fff7ed;">
+                <i class="fa-solid fa-hourglass-half" style="color:#f97316;"></i>
+            </div>
+            <div>
+                <div class="stat-value">@ViewBag.PendingOrders</div>
+                <div class="stat-label">Bekleyen Sipariş</div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h1>Admin Dashboard</h1>
-<p>Welcome to the Admin area!</p>
+<!-- Hızlı Erişim -->
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="admin-card p-4 h-100">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="stat-icon" style="background:#eff6ff; width:42px; height:42px;">
+                    <i class="fa-solid fa-box" style="color:#3b82f6; font-size:16px;"></i>
+                </div>
+                <h6 class="mb-0 fw-bold">Ürün Yönetimi</h6>
+            </div>
+            <p class="text-muted small mb-3">Ürün ekle, düzenle veya kaldır.</p>
+            <a asp-area="Admin" asp-controller="Product" asp-action="Create"
+               class="btn btn-primary btn-sm w-100">
+                <i class="fa-solid fa-plus me-1"></i> Yeni Ürün Ekle
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="admin-card p-4 h-100">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="stat-icon" style="background:#f0fdf4; width:42px; height:42px;">
+                    <i class="fa-solid fa-tags" style="color:#22c55e; font-size:16px;"></i>
+                </div>
+                <h6 class="mb-0 fw-bold">Kategori Yönetimi</h6>
+            </div>
+            <p class="text-muted small mb-3">Kategorileri düzenle veya yenisini oluştur.</p>
+            <a asp-area="Admin" asp-controller="Category" asp-action="Create"
+               class="btn btn-success btn-sm w-100">
+                <i class="fa-solid fa-plus me-1"></i> Yeni Kategori Ekle
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="admin-card p-4 h-100">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="stat-icon" style="background:#fff7ed; width:42px; height:42px;">
+                    <i class="fa-solid fa-cart-shopping" style="color:#f97316; font-size:16px;"></i>
+                </div>
+                <h6 class="mb-0 fw-bold">Sipariş Yönetimi</h6>
+            </div>
+            <p class="text-muted small mb-3">Bekleyen siparişleri gör ve işleme al.</p>
+            <a asp-area="Admin" asp-controller="Order" asp-action="Index"
+               class="btn btn-warning btn-sm w-100">
+                <i class="fa-solid fa-eye me-1"></i> Siparişleri Görüntüle
+            </a>
+        </div>
+    </div>
+</div>

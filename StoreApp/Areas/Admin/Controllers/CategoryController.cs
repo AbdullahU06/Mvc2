@@ -1,10 +1,12 @@
 namespace StoreApp.Areas.Admin.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Services.Contracts;
     using Store.Entities.Models;
 
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -20,12 +22,6 @@ namespace StoreApp.Areas.Admin.Controllers
             return View(categories);
         }
 
-        public IActionResult Details(int id)
-        {
-            var category = _categoryService.GetOneCategory(id, trackChanges: false);
-            return View(category);
-        }
-
         public IActionResult Create()
         {
             return View();
@@ -38,7 +34,32 @@ namespace StoreApp.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // Todo: Db ekleme için service/repository'de metot yazın (Add, Save) ve çağırın
+            _categoryService.CreateOneCategory(model);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Update(int id)
+        {
+            var category = _categoryService.GetOneCategory(id, trackChanges: false);
+            return View(category);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(int id, Category model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            _categoryService.UpdateOneCategory(id, model);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
+        {
+            _categoryService.DeleteOneCategory(id);
             return RedirectToAction(nameof(Index));
         }
     }

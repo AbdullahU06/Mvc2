@@ -1,32 +1,43 @@
 @model Entities.Dtos.ProductDtoForUpdate
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Ürün Düzenle";
+}
 
-<div class="row mb-3">
-    <div class="col-md-6">
-        <h2>Update Product</h2>
-    </div>
+<div class="page-header">
+    <h2>Ürün Düzenle</h2>
+    <p>#@Model.ProductId numaralı ürünü güncelle</p>
 </div>
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Update" method="post" enctype="multipart/form-data">
-            <input type="hidden" asp-for="ProductId" />
-            <div class="mb-3">
-                <label asp-for="ProductName" class="form-label">Product Name</label>
-                <input asp-for="ProductName" class="form-control" />
-                <span asp-validation-for="ProductName" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="Price" class="form-label">Price</label>
-                <input asp-for="Price" type="number" step="0.01" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="File" class="form-label">Product Image (Resim Düzenle/Seç)</label>
-                <input type="file" asp-for="File" class="form-control" />
-                <span asp-validation-for="File" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i> Update Product</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-        </form>
-    </div>
+<div class="form-card">
+    <form asp-action="Update" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="ProductId" />
+        <div class="mb-3">
+            <label asp-for="ProductName" class="form-label">Ürün Adı</label>
+            <input asp-for="ProductName" class="form-control" />
+            <span asp-validation-for="ProductName" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Price" class="form-label">Fiyat (₺)</label>
+            <input asp-for="Price" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="CategoryId" class="form-label">Kategori</label>
+            <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                <option value="">-- Kategori Seçiniz --</option>
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+        </div>
+        <div class="mb-4">
+            <label asp-for="File" class="form-label">Ürün Görseli <span class="text-muted fw-normal">(değiştirmek istemiyorsan boş bırak)</span></label>
+            <input type="file" asp-for="File" class="form-control" accept="image/*" />
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-warning">
+                <i class="fa-solid fa-pen-to-square me-1"></i> Güncelle
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+        </div>
+    </form>
 </div>

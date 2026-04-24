@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Services.Contracts;
 using Entities.Dtos;
 using Microsoft.AspNetCore.Hosting;
@@ -9,14 +11,17 @@ using System.Threading.Tasks;
 namespace StoreApp.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
         private readonly IWebHostEnvironment _env;
 
-        public ProductController(IProductService productService, IWebHostEnvironment env)
+        public ProductController(IProductService productService, ICategoryService categoryService, IWebHostEnvironment env)
         {
             _productService = productService;
+            _categoryService = categoryService;
             _env = env;
         }
 
@@ -34,6 +39,7 @@ namespace StoreApp.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
+            LoadCategoriesIntoViewBag();
             return View();
         }
 
@@ -42,13 +48,16 @@ namespace StoreApp.Areas.Admin.Controllers
         public async Task<IActionResult> Create(ProductDtoForInsertion model)
         {
             if (!ModelState.IsValid)
+            {
+                LoadCategoriesIntoViewBag(model.CategoryId);
                 return View(model);
+            }
 
             if (model.File != null)
             {
                 string uploadsFolder = Path.Combine(_env.WebRootPath, "images");
                 if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-                
+
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.File.FileName;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
@@ -66,6 +75,7 @@ namespace StoreApp.Areas.Admin.Controllers
         public IActionResult Update(int id)
         {
             var productDto = _productService.GetOneProductForUpdate(id, false);
+            LoadCategoriesIntoViewBag(productDto.CategoryId);
             return View(productDto);
         }
 
@@ -74,7 +84,10 @@ namespace StoreApp.Areas.Admin.Controllers
         public async Task<IActionResult> Update(ProductDtoForUpdate model)
         {
             if (!ModelState.IsValid)
+            {
+                LoadCategoriesIntoViewBag(model.CategoryId);
                 return View(model);
+            }
 
             if (model.File != null)
             {
@@ -99,6 +112,12 @@ namespace StoreApp.Areas.Admin.Controllers
         {
             _productService.DeleteOneProduct(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        private void LoadCategoriesIntoViewBag(int? selectedId = null)
+        {
+            var categories = _categoryService.GetAllCategories(trackChanges: false);
+            ViewBag.Categories = new SelectList(categories, "CategoryId", "CategoryName", selectedId);
         }
     }
 }
