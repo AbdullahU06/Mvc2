@@ -1,38 +1,86 @@
 @model Entities.Product
 
-<div class="row mt-4">
-    <div class="col-md-5">
-        @if(string.IsNullOrEmpty(Model.ImageUrl))
-        {
-            <img class="img-fluid border rounded" src="https://via.placeholder.com/400x400?text=No+Image" alt="@Model.ProductName" />
-        }
-        else
-        {
-            <img class="img-fluid border rounded shadow-sm" src="@Model.ImageUrl" alt="@Model.ProductName" />
-        }
-    </div>
-    <div class="col-md-7">
-        <h3 class="display-5">@Model.ProductName</h3>
-        <h4 class="text-success border-bottom pb-2">@Model.Price.ToString("C")</h4>
-        
-        <p class="mt-3">
-            Detaylı ürün açıklaması, stok bilgisi veya ek meta veriler burada yer alabilir.
-        </p>
+<div class="mt-4 mb-2">
+    <a asp-action="Index" style="font-size:13px; color:#4a6355; text-decoration:none;">
+        <i class="fa-solid fa-chevron-left me-1"></i> Ürünlere Dön
+    </a>
+</div>
 
-        <div class="mt-4 d-flex gap-2">
-            <a class="btn btn-primary" asp-controller="Home" asp-action="Index">
-                <i class="fa-solid fa-house"></i> Home
-            </a>
-            <a class="btn btn-outline-primary" asp-controller="Product" asp-action="Index">
-                <i class="fa-solid fa-list"></i> Products
-            </a>
-            <form asp-page="/Cart" method="post">
-                <input type="hidden" name="productId" value="@Model.ProductId" />
-                <input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.PathAndQuery()" />
-                <button type="submit" class="btn btn-success shadow-sm">
-                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                </button>
-            </form>
+<div class="row g-5 mt-0">
+    <!-- Görsel -->
+    <div class="col-md-5">
+        <div style="border-radius:20px; overflow:hidden;
+                    background:#f0f5f1; border:2px solid #dce8e0;
+                    aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;">
+            @if (string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div style="color:#b0c8bb; font-size:80px;">
+                    <i class="fa-solid fa-image"></i>
+                </div>
+            }
+            else
+            {
+                <img src="@Model.ImageUrl" alt="@Model.ProductName"
+                     style="width:100%; height:100%; object-fit:cover;" />
+            }
         </div>
+    </div>
+
+    <!-- Bilgiler -->
+    <div class="col-md-7 d-flex flex-column justify-content-center">
+        <span style="font-size:11px; font-weight:800; text-transform:uppercase;
+                     letter-spacing:.8px; color:#c8a840; margin-bottom:8px; display:block;">
+            #@Model.ProductId
+        </span>
+
+        <h1 style="font-size:28px; font-weight:800; color:#1b3a2d; line-height:1.2; margin-bottom:16px;">
+            @Model.ProductName
+        </h1>
+
+        <div style="font-size:36px; font-weight:900; color:#c8a840;
+                    margin-bottom:24px; letter-spacing:-.5px;">
+            @Model.Price.ToString("N0") ₺
+        </div>
+
+        <!-- Özellikler -->
+        <div style="background:#f0f5f1; border-radius:12px; padding:16px;
+                    margin-bottom:28px; border:1px solid #dce8e0;">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="fa-solid fa-circle-check" style="color:#2d5a3d;"></i>
+                <span style="font-size:14px; color:#2d5a3d; font-weight:500;">Stokta mevcut</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="fa-solid fa-truck" style="color:#c8a840;"></i>
+                <span style="font-size:14px; color:#2d5a3d; font-weight:500;">Hızlı teslimat</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-rotate-left" style="color:#2d5a3d;"></i>
+                <span style="font-size:14px; color:#2d5a3d; font-weight:500;">14 gün iade garantisi</span>
+            </div>
+        </div>
+
+        <!-- Sepete Ekle -->
+        <form asp-page="/Cart" method="post" class="mb-3">
+            <input type="hidden" name="productId" value="@Model.ProductId" />
+            <input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.PathAndQuery()" />
+            <button type="submit"
+                    style="width:100%; padding:15px; background:#1b3a2d; color:#c8a840;
+                           border:none; border-radius:12px; font-size:15px; font-weight:800;
+                           cursor:pointer; transition:all .15s; letter-spacing:.3px;"
+                    onmouseover="this.style.background='#2d5a3d'; this.style.color='white';"
+                    onmouseout="this.style.background='#1b3a2d'; this.style.color='#c8a840';">
+                <i class="fa-solid fa-cart-plus me-2"></i> Sepete Ekle
+            </button>
+        </form>
+
+        <a asp-action="Index"
+           style="display:block; text-align:center; padding:12px;
+                  border:1.5px solid #dce8e0; border-radius:12px;
+                  text-decoration:none; color:#4a6355; font-size:14px; font-weight:600;
+                  transition:all .15s;"
+           onmouseover="this.style.borderColor='#c8a840'; this.style.color='#1b3a2d';"
+           onmouseout="this.style.borderColor='#dce8e0'; this.style.color='#4a6355';">
+            <i class="fa-solid fa-arrow-left me-1"></i> Alışverişe Devam Et
+        </a>
     </div>
 </div>

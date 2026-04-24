@@ -30,8 +30,23 @@
             <span asp-validation-for="CategoryId" class="text-danger small"></span>
         </div>
         <div class="mb-4">
-            <label asp-for="File" class="form-label">Ürün Görseli <span class="text-muted fw-normal">(değiştirmek istemiyorsan boş bırak)</span></label>
-            <input type="file" asp-for="File" class="form-control" accept="image/*" />
+            <label asp-for="File" class="form-label">
+                Ürün Görseli <span class="text-muted fw-normal">(değiştirmek istemiyorsan boş bırak)</span>
+            </label>
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div class="mb-2">
+                    <img src="@Model.ImageUrl" alt="Mevcut görsel"
+                         style="max-height:150px; border-radius:8px; border:1px solid #e2e8f0;" />
+                    <div class="text-muted small mt-1">Mevcut görsel</div>
+                </div>
+            }
+            <input type="file" asp-for="File" class="form-control" accept="image/*"
+                   onchange="previewImage(this, 'imgPreviewUpdate')" />
+            <div class="mt-2">
+                <img id="imgPreviewUpdate" src="#" alt="Yeni görsel önizleme"
+                     style="display:none; max-height:180px; border-radius:8px; border:1px solid #e2e8f0;" />
+            </div>
         </div>
         <div class="d-flex gap-2">
             <button type="submit" class="btn btn-warning">

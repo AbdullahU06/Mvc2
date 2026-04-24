@@ -39,6 +39,7 @@ namespace StoreApp.Controllers
                     return Redirect(model.ReturnUrl);
 
                 var user = await _userManager.FindByEmailAsync(model.Email);
+                TempData["SuccessMessage"] = "Hoş geldiniz!";
                 if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
                     return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
 
@@ -75,6 +76,7 @@ namespace StoreApp.Controllers
             {
                 await _userManager.AddToRoleAsync(user, "User");
                 await _signInManager.SignInAsync(user, isPersistent: false);
+                TempData["SuccessMessage"] = $"Hoş geldiniz, {model.FirstName}! Hesabınız oluşturuldu.";
                 return RedirectToAction("Index", "Product");
             }
 
@@ -90,7 +92,71 @@ namespace StoreApp.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+            TempData["InfoMessage"] = "Çıkış yapıldı. Görüşürüz!";
             return RedirectToAction("Index", "Product");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction(nameof(Login));
+
+            var model = new ProfileViewModel
+            {
+                FirstName = user.FirstName ?? string.Empty,
+                LastName = user.LastName ?? string.Empty,
+                Email = user.Email ?? string.Empty
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(ProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction(nameof(Login));
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            await _userManager.UpdateAsync(user);
+
+            TempData["SuccessMessage"] = "Profil bilgileriniz güncellendi.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Lütfen tüm alanları doğru doldurun.";
+                return RedirectToAction(nameof(Profile));
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction(nameof(Login));
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                await _signInManager.RefreshSignInAsync(user);
+                TempData["SuccessMessage"] = "Şifreniz başarıyla değiştirildi.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Mevcut şifre hatalı.";
+            }
+
+            return RedirectToAction(nameof(Profile));
         }
 
         public IActionResult AccessDenied()

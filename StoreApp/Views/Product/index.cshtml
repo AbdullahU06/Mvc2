@@ -1,65 +1,236 @@
 @model IEnumerable<Product>
 
-<div class="row">
-    <div class="col-12 col-md-3 mb-4">
-        
-        <!-- Search Form -->
-        <div class="card mb-4 mt-3 border-0 shadow-sm">
-            <div class="card-header bg-primary text-white rounded-top">
-                <h6 class="card-title my-1 mb-0 fw-bold"><i class="fa-solid fa-magnifying-glass me-2"></i>Ara / Search</h6>
-            </div>
-            <div class="card-body border border-top-0 rounded-bottom">
+<style>
+    :root {
+        --green:       #1b3a2d;
+        --green-mid:   #2d5a3d;
+        --green-light: #f0f5f1;
+        --gold:        #c8a840;
+        --gold-light:  #fdf6e3;
+        --gold-border: #e8d48a;
+    }
+
+    body { background: #f7f9f7; }
+
+    .shop-sidebar { position: sticky; top: 80px; }
+
+    .filter-card {
+        background: white;
+        border-radius: 14px;
+        border: 1px solid #dce8e0;
+        padding: 20px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 6px rgba(27,58,45,.06);
+    }
+    .filter-title {
+        font-size: 11px; font-weight: 800;
+        text-transform: uppercase; letter-spacing: .8px;
+        color: var(--green); margin-bottom: 14px;
+        display: flex; align-items: center; gap: 6px;
+    }
+    .filter-title::after {
+        content: ''; flex: 1;
+        height: 1px; background: var(--gold-border);
+    }
+
+    /* Arama */
+    .search-input {
+        border-radius: 10px; border: 1.5px solid #dce8e0;
+        padding: 10px 40px 10px 14px;
+        font-size: 14px; width: 100%;
+        outline: none; transition: border-color .2s;
+        color: var(--green);
+    }
+    .search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,168,64,.15); }
+    .search-btn {
+        position: absolute; right: 10px; top: 50%;
+        transform: translateY(-50%);
+        background: none; border: none;
+        color: var(--gold); cursor: pointer; font-size: 14px;
+    }
+    .search-btn:hover { color: var(--green); }
+
+    /* Kategori pill */
+    .cat-pill {
+        display: flex; align-items: center; gap: 8px;
+        padding: 8px 12px; border-radius: 8px;
+        text-decoration: none; font-size: 13px; font-weight: 500;
+        color: #4a6355; margin-bottom: 3px;
+        transition: all .15s;
+    }
+    .cat-pill:hover { background: var(--green-light); color: var(--green); }
+    .cat-pill.active {
+        background: var(--green); color: var(--gold);
+        font-weight: 700;
+    }
+    .cat-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: #b0c8bb; flex-shrink: 0;
+    }
+    .cat-pill.active .cat-dot { background: var(--gold); }
+
+    /* Fiyat */
+    .price-input {
+        border-radius: 8px; border: 1.5px solid #dce8e0;
+        padding: 8px 12px; font-size: 13px; width: 100%;
+        outline: none; transition: border-color .2s; color: var(--green);
+    }
+    .price-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,168,64,.15); }
+
+    .filter-btn {
+        width: 100%; padding: 10px; border-radius: 8px;
+        background: var(--green); color: var(--gold);
+        border: none; font-size: 13px; font-weight: 700;
+        cursor: pointer; transition: all .15s;
+        letter-spacing: .3px;
+    }
+    .filter-btn:hover { background: var(--green-mid); color: white; }
+
+    .clear-link {
+        display: block; text-align: center; font-size: 12px;
+        color: #94a3b8; text-decoration: none; margin-top: 8px;
+    }
+    .clear-link:hover { color: #ef4444; }
+
+    /* Sonuç barı */
+    .results-bar {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 20px; padding-bottom: 14px;
+        border-bottom: 2px solid var(--gold-border);
+    }
+    .results-count { font-size: 14px; color: #4a6355; }
+    .results-count strong { color: var(--green); }
+
+    /* Aktif filtre tag */
+    .filter-tag {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: var(--gold-light); color: var(--green);
+        border: 1px solid var(--gold-border);
+        border-radius: 20px; padding: 3px 10px;
+        font-size: 12px; font-weight: 600; text-decoration: none;
+    }
+    .filter-tag:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+
+    /* Boş durum */
+    .empty-state {
+        text-align: center; padding: 64px 20px;
+        background: white; border-radius: 16px;
+        border: 2px dashed var(--gold-border);
+    }
+    .empty-state .empty-icon { font-size: 48px; color: var(--gold); margin-bottom: 16px; }
+</style>
+
+<div class="row g-4 mt-1">
+
+    <!-- ── Sidebar ── -->
+    <div class="col-12 col-lg-3">
+        <div class="shop-sidebar">
+
+            <!-- Arama -->
+            <div class="filter-card">
+                <div class="filter-title"><i class="fa-solid fa-magnifying-glass"></i> Ürün Ara</div>
                 <form asp-controller="Product" asp-action="Index" method="get">
-                    <!-- Preserve category selected state -->
                     <input type="hidden" name="CategoryId" value="@Context.Request.Query["CategoryId"]" />
-                    <div class="input-group">
-                        <input type="text" name="SearchTerm" class="form-control" placeholder="Laptop..." value="@Context.Request.Query["SearchTerm"]" />
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>
+                    <div style="position:relative;">
+                        <input type="text" name="SearchTerm" class="search-input"
+                               placeholder="Ürün adı girin..."
+                               value="@Context.Request.Query["SearchTerm"]" />
+                        <button type="submit" class="search-btn">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
                     </div>
                 </form>
             </div>
-        </div>
 
-        @await Component.InvokeAsync("CategoriesMenu")
-
-        <!-- Price Range Form -->
-        <div class="card mt-4 border-0 shadow-sm">
-            <div class="card-header bg-success text-white rounded-top">
-                <h6 class="card-title my-1 mb-0 fw-bold"><i class="fa-solid fa-filter me-2"></i>Fiyat / Price</h6>
+            <!-- Kategoriler -->
+            <div class="filter-card">
+                <div class="filter-title"><i class="fa-solid fa-tags"></i> Kategoriler</div>
+                @await Component.InvokeAsync("CategoriesMenu")
             </div>
-            <div class="card-body border border-top-0 rounded-bottom">
+
+            <!-- Fiyat Aralığı -->
+            <div class="filter-card">
+                <div class="filter-title"><i class="fa-solid fa-sliders"></i> Fiyat Aralığı</div>
                 <form asp-controller="Product" asp-action="Index" method="get">
-                    <!-- Preserve state -->
                     <input type="hidden" name="CategoryId" value="@Context.Request.Query["CategoryId"]" />
                     <input type="hidden" name="SearchTerm" value="@Context.Request.Query["SearchTerm"]" />
-
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Min Price (₺)</label>
-                        <input type="number" name="MinPrice" class="form-control form-control-sm" value="@(Context.Request.Query["MinPrice"].FirstOrDefault() ?? "0")" />
+                    <div class="d-flex gap-2 mb-3">
+                        <div style="flex:1;">
+                            <label class="filter-title mb-1">Min ₺</label>
+                            <input type="number" name="MinPrice" class="price-input" placeholder="0"
+                                   value="@(Context.Request.Query["MinPrice"].FirstOrDefault())" />
+                        </div>
+                        <div style="flex:1;">
+                            <label class="filter-title mb-1">Max ₺</label>
+                            <input type="number" name="MaxPrice" class="price-input" placeholder="—"
+                                   value="@(Context.Request.Query["MaxPrice"].FirstOrDefault())" />
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Max Price (₺)</label>
-                        <input type="number" name="MaxPrice" class="form-control form-control-sm" value="@(Context.Request.Query["MaxPrice"].FirstOrDefault() ?? "1000000")" />
-                    </div>
-                    <button type="submit" class="btn btn-outline-success btn-sm w-100"><i class="fa-solid fa-arrow-down-short-wide me-1"></i> Filtrele</button>
+                    <button type="submit" class="filter-btn">
+                        <i class="fa-solid fa-arrow-down-short-wide me-1"></i> Uygula
+                    </button>
                 </form>
+                @{
+                    var hasFilters = Context.Request.Query["SearchTerm"].Any(x => !string.IsNullOrEmpty(x))
+                                  || Context.Request.Query["CategoryId"].Any(x => !string.IsNullOrEmpty(x))
+                                  || Context.Request.Query["MinPrice"].Any(x => !string.IsNullOrEmpty(x))
+                                  || Context.Request.Query["MaxPrice"].Any(x => !string.IsNullOrEmpty(x));
+                }
+                @if (hasFilters)
+                {
+                    <a asp-action="Index" class="clear-link">
+                        <i class="fa-solid fa-xmark me-1"></i> Filtreleri Temizle
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Ürün Grid ── -->
+    <div class="col-12 col-lg-9">
+        <div class="results-bar">
+            <span class="results-count">
+                <strong>@Model.Count()</strong> ürün bulundu
+            </span>
+            <div class="d-flex flex-wrap gap-2">
+                @if (!string.IsNullOrEmpty(Context.Request.Query["SearchTerm"]))
+                {
+                    <a asp-action="Index" asp-route-CategoryId="@Context.Request.Query["CategoryId"]" class="filter-tag">
+                        <i class="fa-solid fa-xmark"></i> "@Context.Request.Query["SearchTerm"]"
+                    </a>
+                }
+                @if (!string.IsNullOrEmpty(Context.Request.Query["MinPrice"]) || !string.IsNullOrEmpty(Context.Request.Query["MaxPrice"]))
+                {
+                    <a asp-action="Index" asp-route-CategoryId="@Context.Request.Query["CategoryId"]"
+                       asp-route-SearchTerm="@Context.Request.Query["SearchTerm"]" class="filter-tag">
+                        <i class="fa-solid fa-xmark"></i>
+                        ₺@(Context.Request.Query["MinPrice"].FirstOrDefault() ?? "0") –
+                        ₺@(Context.Request.Query["MaxPrice"].FirstOrDefault() ?? "∞")
+                    </a>
+                }
             </div>
         </div>
 
-    </div>
-    <div class="col-12 col-md-9">
-        <div class="row g-4 my-3">
-            @if(!Model.Any()) 
-            {
-                <div class="col-12 text-center py-5">
-                    <h4 class="text-muted"><i class="fa-solid fa-box-open mb-3 fs-1 text-danger"></i><br>Ürün bulunamadı. / No products found.</h4>
-                    <a asp-action="Index" class="btn btn-primary mt-3">Tüm Ürünlere Dön (Clear Filters)</a>
-                </div>
-            }
-            @foreach (var prd in Model)
-            {
-                <partial name="_ProductCard" model="@prd" />
-            }
-        </div>
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fa-solid fa-box-open"></i></div>
+                <h5 class="fw-bold mb-2" style="color:var(--green);">Ürün bulunamadı</h5>
+                <p class="text-muted mb-4">Filtreleri değiştirmeyi ya da aramayı temizlemeyi dene.</p>
+                <a asp-action="Index" class="btn px-4 fw-bold"
+                   style="background:var(--green); color:var(--gold); border:none;">
+                    Tüm Ürünleri Göster
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+                @foreach (var prd in Model)
+                {
+                    <partial name="_ProductCard" model="@prd" />
+                }
+            </div>
+        }
     </div>
 </div>

@@ -35,6 +35,7 @@ namespace StoreApp.Areas.Admin.Controllers
                 return View(model);
 
             _categoryService.CreateOneCategory(model);
+            TempData["SuccessMessage"] = "Kategori başarıyla eklendi.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -52,6 +53,7 @@ namespace StoreApp.Areas.Admin.Controllers
                 return View(model);
 
             _categoryService.UpdateOneCategory(id, model);
+            TempData["SuccessMessage"] = "Kategori başarıyla güncellendi.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -60,6 +62,7 @@ namespace StoreApp.Areas.Admin.Controllers
         public IActionResult Delete(int id)
         {
             _categoryService.DeleteOneCategory(id);
+            TempData["SuccessMessage"] = "Kategori başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
     }

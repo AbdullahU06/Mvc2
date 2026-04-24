@@ -235,5 +235,19 @@
 <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="~/lib/font-awesome/js/all.min.js"></script>
 @await RenderSectionAsync("Scripts", required: false)
+<partial name="~/Views/Shared/_Toast.cshtml" />
+<script>
+    function previewImage(input, previewId) {
+        var preview = document.getElementById(previewId);
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 </body>
 </html>

@@ -1,28 +1,35 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">StoreApp</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+<nav style="background:#1b3a2d; border-bottom: 3px solid #c8a840;"
+     class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand fw-bold" href="/"
+           style="color:#c8a840; font-size:18px; letter-spacing:.5px;">
+            <i class="fa-solid fa-store me-2"></i>StoreApp
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
+            <ul class="navbar-nav me-auto gap-1">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" asp-controller="Home" asp-action="Index">Home</a>
+                    <a class="nav-link" style="color:#b0c8bb; font-size:14px; font-weight:500;"
+                       asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" asp-controller="Product"
-                       asp-action="Index">Products(@await Component.InvokeAsync("ProductSummary"))</a>
+                    <a class="nav-link" style="color:#b0c8bb; font-size:14px; font-weight:500;"
+                       asp-controller="Product" asp-action="Index">
+                        Ürünler (@await Component.InvokeAsync("ProductSummary"))
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" asp-controller="Category"
-                       asp-action="Index">Categories</a>
+                    <a class="nav-link" style="color:#b0c8bb; font-size:14px; font-weight:500;"
+                       asp-controller="Category" asp-action="Index">Kategoriler</a>
                 </li>
                 @if (User.IsInRole("Admin"))
                 {
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-                            <i class="fa-solid fa-shield-halved"></i> Admin
+                        <a class="nav-link" style="color:#c8a840; font-size:14px; font-weight:600;"
+                           asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                            <i class="fa-solid fa-shield-halved me-1"></i>Admin
                         </a>
                     </li>
                 }
@@ -33,22 +40,40 @@
 
                 @if (User.Identity!.IsAuthenticated)
                 {
-                    <span class="navbar-text me-2">
-                        <i class="fa-solid fa-user"></i> @User.Identity.Name
-                    </span>
+                    <a asp-controller="Account" asp-action="Profile"
+                       style="font-size:13px; color:#b0c8bb; text-decoration:none;
+                              background:rgba(255,255,255,.08); padding:6px 12px;
+                              border-radius:8px; border:1px solid rgba(200,168,64,.3);">
+                        <i class="fa-solid fa-user me-1" style="color:#c8a840;"></i>@User.Identity.Name
+                    </a>
                     <form asp-controller="Account" asp-action="Logout" method="post">
-                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                            <i class="fa-solid fa-right-from-bracket"></i> Çıkış
+                        <button type="submit"
+                                style="background:transparent; border:1px solid rgba(200,168,64,.4);
+                                       color:#b0c8bb; font-size:13px; padding:6px 12px;
+                                       border-radius:8px; cursor:pointer; transition:all .15s;"
+                                onmouseover="this.style.background='rgba(200,168,64,.15)'"
+                                onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-right-from-bracket"></i>
                         </button>
                     </form>
                 }
                 else
                 {
-                    <a class="btn btn-outline-primary btn-sm" asp-controller="Account" asp-action="Login">
-                        <i class="fa-solid fa-right-to-bracket"></i> Giriş
+                    <a asp-controller="Account" asp-action="Login"
+                       style="font-size:13px; color:#c8a840; text-decoration:none;
+                              border:1px solid rgba(200,168,64,.5); padding:6px 14px;
+                              border-radius:8px; font-weight:600; transition:all .15s;"
+                       onmouseover="this.style.background='rgba(200,168,64,.15)'"
+                       onmouseout="this.style.background='transparent'">
+                        <i class="fa-solid fa-right-to-bracket me-1"></i>Giriş
                     </a>
-                    <a class="btn btn-outline-success btn-sm" asp-controller="Account" asp-action="Register">
-                        <i class="fa-solid fa-user-plus"></i> Kayıt
+                    <a asp-controller="Account" asp-action="Register"
+                       style="font-size:13px; background:#c8a840; color:#1b3a2d;
+                              text-decoration:none; padding:6px 14px; border-radius:8px;
+                              font-weight:700; transition:all .15s;"
+                       onmouseover="this.style.background='#d4b84a'"
+                       onmouseout="this.style.background='#c8a840'">
+                        <i class="fa-solid fa-user-plus me-1"></i>Kayıt
                     </a>
                 }
             </div>

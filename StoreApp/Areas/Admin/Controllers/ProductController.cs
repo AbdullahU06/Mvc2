@@ -69,6 +69,7 @@ namespace StoreApp.Areas.Admin.Controllers
             }
 
             _productService.CreateProduct(model);
+            TempData["SuccessMessage"] = "Ürün başarıyla eklendi.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -105,12 +106,14 @@ namespace StoreApp.Areas.Admin.Controllers
             }
 
             _productService.UpdateOneProduct(model);
+            TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Delete(int id)
         {
             _productService.DeleteOneProduct(id);
+            TempData["SuccessMessage"] = "Ürün başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
 

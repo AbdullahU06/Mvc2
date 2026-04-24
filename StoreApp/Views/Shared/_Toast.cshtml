@@ -1,0 +1,35 @@
+<div id="toast-container" style="position:fixed; top:20px; right:20px; z-index:9999; min-width:300px;">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible shadow-sm d-flex align-items-center gap-2 mb-2" role="alert">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>@TempData["SuccessMessage"]</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible shadow-sm d-flex align-items-center gap-2 mb-2" role="alert">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>@TempData["ErrorMessage"]</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["InfoMessage"] != null)
+    {
+        <div class="alert alert-info alert-dismissible shadow-sm d-flex align-items-center gap-2 mb-2" role="alert">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>@TempData["InfoMessage"]</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    }
+</div>
+
+<script>
+    setTimeout(function () {
+        document.querySelectorAll('#toast-container .alert').forEach(function (el) {
+            el.classList.remove('show');
+            setTimeout(() => el.remove(), 300);
+        });
+    }, 3500);
+</script>
